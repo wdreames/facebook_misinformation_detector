@@ -30,7 +30,9 @@ window.addEventListener("scroll", () => {
 
 The text still needs to be processed, but I think if I start from an instance of "." and end at an instance of "All reactions:", I should be able to process the text.
 
-### The following samples of texts were taken from the current run on a Facebook page. Each entry only appeared once:
+### Sample entries:
+
+The following samples of texts were taken from the current run on a Facebook page. Each entry only appeared once. These were taken out of the logged text manually.
 
 ```
 Attention motorists on State Route 99!
