@@ -28,32 +28,42 @@ window.addEventListener("scroll", () => {
 });
 ```
 
-The text still needs to be processed, but I think if I start from an instance of "." and end at an instance of "All reactions:", I should be able to process the text.
+Furthermore, I was able to isolate the text from posts by finding "All reactions:" to mark the end of the post, and " · " to mark the beginning of a post. This was the updated code:
 
-### Sample entries:
+```javascript
+var lastLog = "";
+const startOfPostMarker = " · ";
+const endOfPostMarker = "All reactions:";
 
-The following samples of texts were taken from the current run on a Facebook page. Each entry only appeared once. These were taken out of the logged text manually.
+window.addEventListener("scroll", () => {
+    // Gather the text on the page
+    const newLog = document.getElementById("facebook").innerText;
 
+    // Remove text found previously
+    var start = newLog.indexOf(lastLog);
+    var end = start + lastLog.length;
+    var currentLog = newLog.substring(0, start - 1) + newLog.substring(end);
+
+    // Limit to only text from posts
+    while(currentLog.indexOf(endOfPostMarker) !== -1){
+        var endOfPost = currentLog.indexOf(endOfPostMarker);
+        var textUpToEndOfPost = currentLog.substring(0, endOfPost);
+        var startOfPost = textUpToEndOfPost.lastIndexOf(startOfPostMarker);
+
+        var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
+        if(facebookPostText.length !== 0){
+            console.log(facebookPostText);
+        }
+
+        currentLog = currentLog.replace(startOfPostMarker + facebookPostText + endOfPostMarker, "");
+    }
+
+    if(newLog.length !== 0){
+        var lastEndOfPost = newLog.lastIndexOf(endOfPostMarker);
+        lastLog = newLog.substring(0, lastEndOfPost + endOfPostMarker.length);
+    }
+});
 ```
-Attention motorists on State Route 99!
-Officer Kennell is out there working speed enforcement and making sure everyone stays safe on the road. Let's make sure we're abiding by the speed limit and keeping our highways safe for all.
-Here's a fun fact: Did you know that the fastest speeding ticket ever given was in Texas in 2003? The driver was going a whopping 242 mph in a 75 mph zone! Let's make sure we stay within the speed limit and avoid getting any tickets ourselves. D… See more
 
-Sign up for HBO Max to stream every episode of House of the Dragon. Plans start at $9.99/month.
-HBOMAX.COM
-Watch Season 1 Now
-Return to Westeros.
+From here, I will need to store the text, along with a relationship to its misinformation likelihood score. At the current moment in time, all misinformation scores will be randomized as either 0 or 1. This will also allow me to work on updating the webpage to highlight posts containing misinformation.
 
-IMPOSSIBLE COCONUT 
- PIE
-All the ingredients are mixed together and poured into a pie tin, but when it cooks it forms its own crust with filling This has a coconut vanilla taste like a coconut cream pie ! It never fails me ! 
-Ingredients
-2 cups milk
-1 cup shredded coconut… See more
-
-Campbell’s…. Savage!  Love it!
-
-Got to see these beauties last night!  Did a soul good (just not my head or tummy)!  Love this family!
-
-We are preparing to rock Franklin one day soon.
-```
