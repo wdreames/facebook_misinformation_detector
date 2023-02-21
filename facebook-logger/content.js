@@ -2,6 +2,8 @@ var lastLog = "";
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 
+const misinformationScores = new Map();
+
 window.addEventListener("scroll", () => {
     // Gather the text on the page
     const newLog = document.getElementById("facebook").innerText;
@@ -31,8 +33,11 @@ window.addEventListener("scroll", () => {
         }
 
         var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
-        if(facebookPostText.length !== 0){
+        if(facebookPostText.length !== 0 && facebookPostText !== '\n'){
             console.log(facebookPostText);
+            score = Math.random();
+            misinformationScores.set(facebookPostText, score);
+            // console.log(misinformationScores);
         }
 
         currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");

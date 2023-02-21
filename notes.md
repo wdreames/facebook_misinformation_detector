@@ -3,6 +3,9 @@ William Reames
 
 ## 02/20/2023
 
+Execute the following command in the terminal to include chrome typing in VS Code:
+`npm i chrome-types`
+
 The following javascript code can successfully pull text from Facebook as a user is scrolling through the page:
 
 
