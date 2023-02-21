@@ -2,4 +2,4 @@
 
 William Reames
 
-Notes about current developments can be found in the [notes.md](notes.md) file.
+This project is still a work in progress. Notes about current developments can be found in the [notes.md](notes.md) file.
