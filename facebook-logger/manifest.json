@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Facebook Logger",
+    "version": "1.0",
+    "description": "Logs text from Facebook Posts into the Chrome console log.",
+
+    "content_scripts": [
+        {
+            "js": ["content.js"],
+            "matches": [
+                "https://www.facebook.com/*"
+            ]
+        }
+    ]
+}
