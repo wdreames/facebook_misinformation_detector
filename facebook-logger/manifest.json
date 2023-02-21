@@ -11,5 +11,12 @@
                 "https://www.facebook.com/*"
             ]
         }
-    ]
+    ],
+
+    "permissions": ["activeTab", "scripting"],
+
+    "action": {},
+    "background": {
+        "service_worker": "background.js"
+    }
 }

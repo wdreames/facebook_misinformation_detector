@@ -70,3 +70,8 @@ window.addEventListener("scroll", () => {
 
 From here, I will need to store the text, along with a relationship to its misinformation likelihood score. At the current moment in time, all misinformation scores will be randomized as either 0 or 1. This will also allow me to work on updating the webpage to highlight posts containing misinformation.
 
+
+## 02/21/2023
+
+I was able to highlight some text on the page by injecting CSS and reformatting the HTML. However, this was not a great solution. It ended up refomatting the page so it was somewhat unusable, and slowed things down dramatically. I will need to look into a better solution.
+
