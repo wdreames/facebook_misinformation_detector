@@ -21,17 +21,27 @@ window.addEventListener("scroll", () => {
      * Continue this process until no "All reactions:" can be found in the current log
      */
 
+    var numLoops = 0;
     while(currentLog.indexOf(endOfPostMarker) !== -1){
         var endOfPost = currentLog.indexOf(endOfPostMarker);
         var textUpToEndOfPost = currentLog.substring(0, endOfPost);
         var startOfPost = textUpToEndOfPost.lastIndexOf(startOfPostMarker);
+        if(startOfPost === -1){
+            startOfPost = 0;
+        }
 
         var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
         if(facebookPostText.length !== 0){
             console.log(facebookPostText);
         }
 
-        currentLog = currentLog.replace(startOfPostMarker + facebookPostText + endOfPostMarker, "");
+        currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");
+
+        //This is for debugging purposes.
+        numLoops += 1;
+        if(numLoops >= 100){
+            console.log(currentLog);
+        }
     }
 
     if(newLog.length !== 0){
