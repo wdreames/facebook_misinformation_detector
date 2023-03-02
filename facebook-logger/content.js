@@ -1,8 +1,11 @@
+// import { Mark } from './mark.js/dist/mark.es6';
+
 var lastLog = "";
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
 const misinformationScores = new Map();
+const previouslyFoundText = new Set();
 
 function markMisinformation(text, score){
     console.log(`${score.toFixed(2)}: ${text}`);
@@ -20,14 +23,21 @@ function markMisinformation(text, score){
     //     );
     // }
 
-    // This kinda works:
-    // textLines = text.split('\n');
-    // for(var i = 0; i<textLines.length; i++){
-    //     if (textLines[i].trim().length > 0) {
-    //         console.log(`Highlighting "${textLines[i]}"`);
-    //         InstantSearch.highlight(container, textLines[i]);
-    //     }
-    // }
+    // This kinda works, but not really:
+    textLines = text.split('\n');
+    for(var i = 0; i<textLines.length; i++){
+        var currentText = textLines[i].trim();
+        currrentText = currentText.replace('… See more', '');
+        if (previouslyFoundText.has(currentText) ){
+            continue;
+        }
+        previouslyFoundText.add(currentText);
+
+        if (currentText.length > 0) {
+            console.log(`Highlighting "${textLines[i]}"`);
+            InstantSearch.highlight(container, textLines[i]);
+        }
+    }
     
     // Highlighting misinformation with mark.js
     // var instance = new Mark(container);

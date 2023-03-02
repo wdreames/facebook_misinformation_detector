@@ -6,7 +6,7 @@
 
     "content_scripts": [
         {
-            "js": ["content.js"],
+            "js": ["facebook-logger/content.js"],
             "matches": [
                 "https://www.facebook.com/*"
             ]
@@ -17,6 +17,6 @@
 
     "action": {},
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "facebook-logger/background.js"
     }
 }

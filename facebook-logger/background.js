@@ -6,7 +6,7 @@ chrome.action.onClicked.addListener(async (tab) => {
 
         console.log('Adding CSS');
         chrome.scripting.insertCSS({
-            files: ['highlight.css'],
+            files: ['facebook-logger/highlight.css'],
             target: { tabId: tab.id },
         });
     }
