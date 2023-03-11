@@ -7,8 +7,31 @@ const facebookId = "facebook"
 const misinformationScores = new Map();
 const previouslyFoundText = new Set();
 
+const misinfoProcessorSeverURL = 'http://127.0.0.1/Fake_News_Detection/check_for_misinfo.php'
+
+const defaultMisinformationValue = 1.0;
+
+
+function getMisinformationScore(text){
+    var xmlHttp = new XMLHttpRequest();
+    var asynchronous = false;
+    var formattedText = text.replace('\n', ' ').trim();
+    var requestURL = misinfoProcessorSeverURL + "?text=" + formattedText;
+
+    xmlHttp.open( "GET", requestURL, asynchronous );
+    xmlHttp.send(null);
+
+    var responsePlainText = xmlHttp.responseText.replace(/(<([^>]+)>)/ig,"");
+    var misinformationScore = Number(responsePlainText);
+
+    if (isNaN(misinformationScore)) {
+        return defaultMisinformationValue;
+    }
+    return misinformationScore;
+}
+
 function markMisinformation(text, score){
-    console.log(`${score.toFixed(2)}: ${text}`);
+    console.log(`${score}: ${text}`);
     var container = document.getElementById(facebookId);
     // var documentHTML = document.getElementById(facebookId).innerHTML;
     // var textIndex = documentHTML.indexOf(text);
@@ -77,18 +100,12 @@ window.addEventListener("scroll", () => {
         if(facebookPostText.length !== 0 && facebookPostText !== '\n'){
             
             // Find the misinformation likelihood score
-            score = Math.random();
+            var score = getMisinformationScore(facebookPostText);
             misinformationScores.set(facebookPostText, score);
             markMisinformation(facebookPostText, score);
         }
 
         currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");
-
-        //This is for debugging purposes.
-        numLoops += 1;
-        if(numLoops >= 100){
-            console.log(currentLog);
-        }
     }
 
     if(newLog.length !== 0){
