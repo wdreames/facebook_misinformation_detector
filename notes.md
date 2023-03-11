@@ -75,3 +75,30 @@ From here, I will need to store the text, along with a relationship to its misin
 
 I was able to highlight some text on the page by injecting CSS and reformatting the HTML. However, this was not a great solution. It ended up refomatting the page so it was somewhat unusable, and slowed things down dramatically. I will need to look into a better solution.
 
+
+## 03/11/2023
+
+I was able to set up a pre-made ML algorithm developed by another person on a local apache server. I set it up so that it could be run through the use of a GET request. This allowed me to call the ML algorithm inside the Chrome Extension!
+
+The following code was added to `content.js` to accomplish this:
+
+```javascript
+function getMisinformationScore(text){
+    var xmlHttp = new XMLHttpRequest();
+    var asynchronous = false;
+    var formattedText = text.replace('\n', ' ').trim();
+    var requestURL = misinfoProcessorSeverURL + "?text=" + formattedText;
+
+    xmlHttp.open( "GET", requestURL, asynchronous );
+    xmlHttp.send(null);
+
+    var responsePlainText = xmlHttp.responseText.replace(/(<([^>]+)>)/ig,"");
+    var misinformationScore = Number(responsePlainText);
+
+    if (isNaN(misinformationScore)) {
+        return defaultMisinformationValue;
+    }
+    return misinformationScore;
+}
+```
+
