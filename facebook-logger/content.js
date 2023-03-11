@@ -4,7 +4,6 @@ var lastLog = "";
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
-const misinformationScores = new Map();
 const previouslyFoundText = new Set();
 
 const misinfoProcessorSeverURL = 'http://127.0.0.1/Fake_News_Detection/check_for_misinfo.php'
@@ -31,7 +30,6 @@ function getMisinformationScore(text){
 }
 
 function markMisinformation(text, score){
-    console.log(`${score}: ${text}`);
     var container = document.getElementById(facebookId);
     // var documentHTML = document.getElementById(facebookId).innerHTML;
     // var textIndex = documentHTML.indexOf(text);
@@ -101,8 +99,12 @@ window.addEventListener("scroll", () => {
             
             // Find the misinformation likelihood score
             var score = getMisinformationScore(facebookPostText);
-            misinformationScores.set(facebookPostText, score);
-            markMisinformation(facebookPostText, score);
+
+            console.log(`${score}: ${facebookPostText}`);
+
+            if (score < 0.5){
+                markMisinformation(facebookPostText, score);
+            }
         }
 
         currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");
