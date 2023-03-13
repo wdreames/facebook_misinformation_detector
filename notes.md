@@ -3,6 +3,9 @@ William Reames
 
 ## 02/20/2023
 
+Execute the following command in the terminal to include chrome typing in VS Code:
+`npm i chrome-types`
+
 The following javascript code can successfully pull text from Facebook as a user is scrolling through the page:
 
 
@@ -28,30 +31,74 @@ window.addEventListener("scroll", () => {
 });
 ```
 
-The text still needs to be processed, but I think if I start from an instance of "." and end at an instance of "All reactions:", I should be able to process the text.
+Furthermore, I was able to isolate the text from posts by finding "All reactions:" to mark the end of the post, and " · " to mark the beginning of a post. This was the updated code:
 
-### The following samples of texts were taken from the current run on a Facebook page. Each entry only appeared once:
+```javascript
+var lastLog = "";
+const startOfPostMarker = " · ";
+const endOfPostMarker = "All reactions:";
 
+window.addEventListener("scroll", () => {
+    // Gather the text on the page
+    const newLog = document.getElementById("facebook").innerText;
+
+    // Remove text found previously
+    var start = newLog.indexOf(lastLog);
+    var end = start + lastLog.length;
+    var currentLog = newLog.substring(0, start - 1) + newLog.substring(end);
+
+    // Limit to only text from posts
+    while(currentLog.indexOf(endOfPostMarker) !== -1){
+        var endOfPost = currentLog.indexOf(endOfPostMarker);
+        var textUpToEndOfPost = currentLog.substring(0, endOfPost);
+        var startOfPost = textUpToEndOfPost.lastIndexOf(startOfPostMarker);
+
+        var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
+        if(facebookPostText.length !== 0){
+            console.log(facebookPostText);
+        }
+
+        currentLog = currentLog.replace(startOfPostMarker + facebookPostText + endOfPostMarker, "");
+    }
+
+    if(newLog.length !== 0){
+        var lastEndOfPost = newLog.lastIndexOf(endOfPostMarker);
+        lastLog = newLog.substring(0, lastEndOfPost + endOfPostMarker.length);
+    }
+});
 ```
-Attention motorists on State Route 99!
-Officer Kennell is out there working speed enforcement and making sure everyone stays safe on the road. Let's make sure we're abiding by the speed limit and keeping our highways safe for all.
-Here's a fun fact: Did you know that the fastest speeding ticket ever given was in Texas in 2003? The driver was going a whopping 242 mph in a 75 mph zone! Let's make sure we stay within the speed limit and avoid getting any tickets ourselves. D… See more
 
-Sign up for HBO Max to stream every episode of House of the Dragon. Plans start at $9.99/month.
-HBOMAX.COM
-Watch Season 1 Now
-Return to Westeros.
+From here, I will need to store the text, along with a relationship to its misinformation likelihood score. At the current moment in time, all misinformation scores will be randomized as either 0 or 1. This will also allow me to work on updating the webpage to highlight posts containing misinformation.
 
-IMPOSSIBLE COCONUT 
- PIE
-All the ingredients are mixed together and poured into a pie tin, but when it cooks it forms its own crust with filling This has a coconut vanilla taste like a coconut cream pie ! It never fails me ! 
-Ingredients
-2 cups milk
-1 cup shredded coconut… See more
 
-Campbell’s…. Savage!  Love it!
+## 02/21/2023
 
-Got to see these beauties last night!  Did a soul good (just not my head or tummy)!  Love this family!
+I was able to highlight some text on the page by injecting CSS and reformatting the HTML. However, this was not a great solution. It ended up refomatting the page so it was somewhat unusable, and slowed things down dramatically. I will need to look into a better solution.
 
-We are preparing to rock Franklin one day soon.
+
+## 03/11/2023
+
+I was able to set up a pre-made ML algorithm developed by another person on a local apache server. I set it up so that it could be run through the use of a GET request. This allowed me to call the ML algorithm inside the Chrome Extension!
+
+The following code was added to `content.js` to accomplish this:
+
+```javascript
+function getMisinformationScore(text){
+    var xmlHttp = new XMLHttpRequest();
+    var asynchronous = false;
+    var formattedText = text.replace('\n', ' ').trim();
+    var requestURL = misinfoProcessorSeverURL + "?text=" + formattedText;
+
+    xmlHttp.open( "GET", requestURL, asynchronous );
+    xmlHttp.send(null);
+
+    var responsePlainText = xmlHttp.responseText.replace(/(<([^>]+)>)/ig,"");
+    var misinformationScore = Number(responsePlainText);
+
+    if (isNaN(misinformationScore)) {
+        return defaultMisinformationValue;
+    }
+    return misinformationScore;
+}
 ```
+
