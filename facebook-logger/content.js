@@ -1,15 +1,16 @@
-// import { Mark } from './mark.js/dist/mark.es6';
+/*
+ * William Reames
+ * CNU Cybersecurity Capstone 2023
+ * Facebook Misinformation Detector
+ */
 
 var lastLog = "";
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
 const previouslyFoundText = new Set();
-
 const misinfoProcessorSeverURL = 'http://127.0.0.1/Fake_News_Detection/check_for_misinfo.php'
-
 const defaultMisinformationValue = 1.0;
-
 
 function getMisinformationScore(text){
     var xmlHttp = new XMLHttpRequest();
@@ -31,24 +32,12 @@ function getMisinformationScore(text){
 
 function markMisinformation(text, score){
     var container = document.getElementById(facebookId);
-    // var documentHTML = document.getElementById(facebookId).innerHTML;
-    // var textIndex = documentHTML.indexOf(text);
-    // if (textIndex >= 0) {
-    //     documentHTML = (
-    //         documentHTML.substring(0, textIndex) + 
-    //         "<span class='highlight'>" + 
-    //         documentHTML.substring(textIndex, textIndex + text.length) +
-    //         " hello world :) " +
-    //         "</span>" +
-    //         documentHTML.substring(textIndex + text.length)
-    //     );
-    // }
 
-    // This kinda works, but not really:
+    // TODO: Find a way to determine if the text contains a link
     textLines = text.split('\n');
     for(var i = 0; i<textLines.length; i++){
         var currentText = textLines[i].trim();
-        currrentText = currentText.replace('… See more', '');
+        currentText = currentText.replace('… See more', '');
         if (previouslyFoundText.has(currentText) ){
             continue;
         }
@@ -59,10 +48,6 @@ function markMisinformation(text, score){
             InstantSearch.highlight(container, textLines[i]);
         }
     }
-    
-    // Highlighting misinformation with mark.js
-    // var instance = new Mark(container);
-    // instance.mark(facebookPostText);
 }
 
 window.addEventListener("scroll", () => {
@@ -70,43 +55,34 @@ window.addEventListener("scroll", () => {
     var container = document.getElementById(facebookId);
     var newLog = container.innerText;
 
-    // Remove text found previously
+    // Remove text that was found previously
     var start = newLog.indexOf(lastLog);
     var end = start + lastLog.length;
     var currentLog = newLog.substring(0, start - 1) + newLog.substring(end);
 
     // Limit to only text from posts
-    /* 
-     * Find the index of an "All reactions:". This is the end of a post
-     * Find the last intance of " · " before the location marked as the end of the post. This is the beginning of the post
-     * Take a substring of (start + 3, end). This is the text of the post
-     * Store the post text
-     * Remove the text from the current log
-     * Continue this process until no "All reactions:" can be found in the current log
-     */
-
     var numLoops = 0;
     while(currentLog.indexOf(endOfPostMarker) !== -1){
+
+        // Get the text from a post
         var endOfPost = currentLog.indexOf(endOfPostMarker);
         var textUpToEndOfPost = currentLog.substring(0, endOfPost);
         var startOfPost = textUpToEndOfPost.lastIndexOf(startOfPostMarker);
         if(startOfPost === -1){
             startOfPost = 0;
         }
-
         var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
+
+        // Check the post for misinformation
         if(facebookPostText.length !== 0 && facebookPostText !== '\n'){
-            
-            // Find the misinformation likelihood score
             var score = getMisinformationScore(facebookPostText);
-
             console.log(`${score}: ${facebookPostText}`);
-
             if (score < 0.5){
                 markMisinformation(facebookPostText, score);
             }
         }
 
+        // Remove the post text from the current log
         currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");
     }
 
