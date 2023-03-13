@@ -14,16 +14,16 @@ const defaultMisinformationValue = 1.0;
 
 function getMisinformationScore(text){
     var xmlHttp = new XMLHttpRequest();
-    var asynchronous = false;
-    var formattedText = text.replace('\n', ' ').trim();
-    var requestURL = misinfoProcessorSeverURL + "?text=" + formattedText;
+    var cleanedText = text.replace('\n', ' ').trim();
+    var requestURL = misinfoProcessorSeverURL + "?text=" + cleanedText;
 
-    xmlHttp.open( "GET", requestURL, asynchronous );
-    xmlHttp.send(null);
+    xmlHttp.open("GET", requestURL, async=false);
+    xmlHttp.send();
 
+    // Removes HTML headers from the response
     var responsePlainText = xmlHttp.responseText.replace(/(<([^>]+)>)/ig,"");
-    var misinformationScore = Number(responsePlainText);
 
+    var misinformationScore = Number(responsePlainText);
     if (isNaN(misinformationScore)) {
         return defaultMisinformationValue;
     }
