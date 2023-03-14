@@ -5,12 +5,13 @@
  */
 
 var lastLog = "";
+var previouslyFoundText = new Set();
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
-const previouslyFoundText = new Set();
 const misinfoProcessorSeverURL = 'http://127.0.0.1/Fake_News_Detection/check_for_misinfo.php'
 const defaultMisinformationValue = 1.0;
+const misinformationThreshold = 0.5;
 
 function getMisinformationScore(text){
     var xmlHttp = new XMLHttpRequest();
@@ -20,7 +21,7 @@ function getMisinformationScore(text){
     xmlHttp.open("GET", requestURL, async=false);
     xmlHttp.send();
 
-    // Removes HTML headers from the response
+    // Removes HTML tags from the response
     var responsePlainText = xmlHttp.responseText.replace(/(<([^>]+)>)/ig,"");
 
     var misinformationScore = Number(responsePlainText);
@@ -31,6 +32,12 @@ function getMisinformationScore(text){
 }
 
 function markMisinformation(text, score){
+    if (score >= misinformationThreshold){
+        return;
+    }
+
+    console.log(`highlighting ${text.substring(0, 35).replace('\n', '')}...`)
+
     var container = document.getElementById(facebookId);
 
     // TODO: Find a way to determine if the text contains a link
@@ -44,8 +51,8 @@ function markMisinformation(text, score){
         previouslyFoundText.add(currentText);
 
         if (currentText.length > 0) {
-            console.log(`Highlighting "${textLines[i]}"`);
-            InstantSearch.highlight(container, textLines[i]);
+            // console.log(`Highlighting "${currentText}"`);
+            InstantSearch.highlight(container, currentText);
         }
     }
 }
@@ -76,10 +83,8 @@ window.addEventListener("scroll", () => {
         // Check the post for misinformation
         if(facebookPostText.length !== 0 && facebookPostText !== '\n'){
             var score = getMisinformationScore(facebookPostText);
-            console.log(`${score}: ${facebookPostText}`);
-            if (score < 0.5){
-                markMisinformation(facebookPostText, score);
-            }
+            console.log(`${score.toFixed(3)}: ${facebookPostText}`);
+            markMisinformation(facebookPostText, score);
         }
 
         // Remove the post text from the current log
