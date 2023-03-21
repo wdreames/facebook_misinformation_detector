@@ -9,53 +9,9 @@ var previouslyFoundText = new Set();
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
-const misinfoProcessorSeverURL = 'http://127.0.0.1/Fake_News_Detection/check_for_misinfo.php'
+const misinfoProcessorSeverURL = 'https://william-reames.com/check_for_misinfo.php';
 const defaultMisinformationValue = 1.0;
 const misinformationThreshold = 0.5;
-
-function getMisinformationScore(text){
-    var xmlHttp = new XMLHttpRequest();
-    var cleanedText = text.replace('\n', ' ').trim();
-    var requestURL = misinfoProcessorSeverURL + "?text=" + cleanedText;
-
-    xmlHttp.open("GET", requestURL, async=false);
-    xmlHttp.send();
-
-    // Removes HTML tags from the response
-    var responsePlainText = xmlHttp.responseText.replace(/(<([^>]+)>)/ig,"");
-
-    var misinformationScore = Number(responsePlainText);
-    if (isNaN(misinformationScore)) {
-        return defaultMisinformationValue;
-    }
-    return misinformationScore;
-}
-
-function markMisinformation(text, score){
-    if (score >= misinformationThreshold){
-        return;
-    }
-
-    console.log(`highlighting ${text.substring(0, 35).replace('\n', '')}...`)
-
-    var container = document.getElementById(facebookId);
-
-    // TODO: Find a way to determine if the text contains a link
-    textLines = text.split('\n');
-    for(var i = 0; i<textLines.length; i++){
-        var currentText = textLines[i].trim();
-        currentText = currentText.replace('… See more', '');
-        if (previouslyFoundText.has(currentText) ){
-            continue;
-        }
-        previouslyFoundText.add(currentText);
-
-        if (currentText.length > 0) {
-            // console.log(`Highlighting "${currentText}"`);
-            InstantSearch.highlight(container, currentText);
-        }
-    }
-}
 
 window.addEventListener("scroll", () => {
     // Gather the text on the page
@@ -80,11 +36,8 @@ window.addEventListener("scroll", () => {
         }
         var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
 
-        // Check the post for misinformation
         if(facebookPostText.length !== 0 && facebookPostText !== '\n'){
-            var score = getMisinformationScore(facebookPostText);
-            console.log(`${score.toFixed(3)}: ${facebookPostText}`);
-            markMisinformation(facebookPostText, score);
+            checkForMisinformation(facebookPostText);
         }
 
         // Remove the post text from the current log
@@ -96,6 +49,60 @@ window.addEventListener("scroll", () => {
         lastLog = newLog.substring(0, lastEndOfPost + endOfPostMarker.length);
     }
 });
+
+function checkForMisinformation(facebookPostText){
+    var xmlHttp = new XMLHttpRequest();
+    var cleanedText = facebookPostText.replace('\n', ' ').trim();
+    var requestURL = misinfoProcessorSeverURL + "?text=" + cleanedText;
+
+    xmlHttp.open("GET", requestURL, async=true);
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+            // console.log(`${xmlHttp.responseText}: ${cleanedText}`);
+            processMisinformationRequest(facebookPostText, xmlHttp.responseText);
+        }
+    }
+    console.log(`sending request for "${requestURL}"`)
+    xmlHttp.send();
+}
+
+function processMisinformationRequest(facebookPostText, responseText) {
+
+    // Removes HTML tags from the response
+    var responsePlainText = responseText.replace(/(<([^>]+)>)/ig,"");
+
+    var misinformationScore = Number(responsePlainText);
+    if (isNaN(misinformationScore)) {
+        return defaultMisinformationValue;
+    }
+
+    console.log(`${misinformationScore}: ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
+    if (misinformationScore < misinformationThreshold) {
+        markMisinformation(facebookPostText);
+    }    
+}
+
+function markMisinformation(facebookPostText){
+    console.log(`highlighting ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
+
+    var container = document.getElementById(facebookId);
+
+    // TODO: Find a way to determine if the text contains a link
+    textLines = facebookPostText.split('\n');
+    for(var i = 0; i<textLines.length; i++){
+        var currentText = textLines[i].trim();
+        currentText = currentText.replace('… See more', '');
+        if (previouslyFoundText.has(currentText) ){
+            continue;
+        }
+        previouslyFoundText.add(currentText);
+
+        if (currentText.length > 0) {
+            // console.log(`Highlighting "${currentText}"`);
+            InstantSearch.highlight(container, currentText);
+        }
+    }
+}
 
 /*
  * The following code was taken from https://stackoverflow.com/questions/8644428/how-to-highlight-text-using-javascript

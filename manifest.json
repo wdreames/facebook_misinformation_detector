@@ -7,18 +7,17 @@
     "content_scripts": [
         {
             "js": ["facebook-logger/content.js"],
+            "css": ["facebook-logger/highlight.css"],
             "matches": [
                 "https://www.facebook.com/*"
             ]
         }
     ],
 
-    "host_permissions": ["http://127.0.0.1/*"],
+    "host_permissions": [
+        "http://127.0.0.1/*", 
+        "https://william-reames.com/*"
+    ],
 
-    "permissions": ["activeTab", "scripting"],
-
-    "action": {},
-    "background": {
-        "service_worker": "facebook-logger/background.js"
-    }
+    "permissions": ["activeTab", "scripting"]
 }

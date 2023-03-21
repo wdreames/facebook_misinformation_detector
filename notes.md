@@ -102,3 +102,20 @@ function getMisinformationScore(text){
 }
 ```
 
+## 03/21/2023
+
+I was able to get my extension to work with my AWS Server! This required me purchasing a domain name and setting up my apache server to work with HTTPS. I was also able to rework my code to use asynchronous requests rather than synchronous ones!
+
+Furthermore, I was able to update my extension to automatically inject CSS into the Facebook webpage. Previously, this would have required the user to click on the extension icon. The only change that was required was updating my manifest to include the CSS file:
+
+```json
+    "content_scripts": [
+        {
+            "js": ["facebook-logger/content.js"],
+            "css": ["facebook-logger/highlight.css"],
+            "matches": [
+                "https://www.facebook.com/*"
+            ]
+        }
+    ],
+```
