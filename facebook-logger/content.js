@@ -9,7 +9,7 @@ var previouslyFoundText = new Set();
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
-const misinfoProcessorSeverURL = 'https://william-reames.com/check_for_misinfo.php';
+const misinfoProcessorSeverURL = 'https://william-reames.com/facebook-misinformation-detector/check-for-misinfo.php';
 const defaultMisinformationValue = 1.0;
 const misinformationThreshold = 0.5;
 
