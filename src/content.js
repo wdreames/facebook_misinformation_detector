@@ -4,16 +4,21 @@
  * Facebook Misinformation Detector
  */
 
-var lastLog = "";
-var previouslyFoundText = new Set();
+const misinfoProcessorSeverURL = 'https://william-reames.com/facebook-misinformation-detector/check-for-misinfo.php';
+const misinfoProcessorParameterKey = 'text';
+const misinformationThreshold = 0.5;
+const defaultMisinformationValue = 1.0;
+
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
-const misinfoProcessorSeverURL = 'https://william-reames.com/check_for_misinfo.php';
-const defaultMisinformationValue = 1.0;
-const misinformationThreshold = 0.5;
 
-window.addEventListener("scroll", () => {
+var lastLog = "";
+var previouslyFoundText = new Set();
+
+window.addEventListener("scroll", gatherFacebookText);
+
+function gatherFacebookText(){
     // Gather the text on the page
     var container = document.getElementById(facebookId);
     var newLog = container.innerText;
@@ -23,8 +28,7 @@ window.addEventListener("scroll", () => {
     var end = start + lastLog.length;
     var currentLog = newLog.substring(0, start - 1) + newLog.substring(end);
 
-    // Limit to only text from posts
-    var numLoops = 0;
+    // Gather text from all new posts
     while(currentLog.indexOf(endOfPostMarker) !== -1){
 
         // Get the text from a post
@@ -36,11 +40,12 @@ window.addEventListener("scroll", () => {
         }
         var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
 
+        // Check the text for misinformation
         if(facebookPostText.length !== 0 && facebookPostText !== '\n'){
             checkForMisinformation(facebookPostText);
         }
 
-        // Remove the post text from the current log
+        // Remove the text from the current log of text
         currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");
     }
 
@@ -48,32 +53,30 @@ window.addEventListener("scroll", () => {
         var lastEndOfPost = newLog.lastIndexOf(endOfPostMarker);
         lastLog = newLog.substring(0, lastEndOfPost + endOfPostMarker.length);
     }
-});
+};
 
 function checkForMisinformation(facebookPostText){
     var xmlHttp = new XMLHttpRequest();
     var cleanedText = facebookPostText.replace('\n', ' ').trim();
-    var requestURL = misinfoProcessorSeverURL + "?text=" + cleanedText;
+    var requestURL = misinfoProcessorSeverURL + "?" + misinfoProcessorParameterKey + "=" + cleanedText;
 
     xmlHttp.open("GET", requestURL, async=true);
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-            // console.log(`${xmlHttp.responseText}: ${cleanedText}`);
             processMisinformationRequest(facebookPostText, xmlHttp.responseText);
         }
     }
-    console.log(`sending request for "${requestURL}"`)
+    console.debug(`sending request for "${requestURL}"`)
     xmlHttp.send();
 }
 
 function processMisinformationRequest(facebookPostText, responseText) {
-
     // Removes HTML tags from the response
     var responsePlainText = responseText.replace(/(<([^>]+)>)/ig,"");
 
     var misinformationScore = Number(responsePlainText);
     if (isNaN(misinformationScore)) {
-        return defaultMisinformationValue;
+        misinformationScore = defaultMisinformationValue;
     }
 
     console.log(`${misinformationScore}: ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
@@ -83,11 +86,11 @@ function processMisinformationRequest(facebookPostText, responseText) {
 }
 
 function markMisinformation(facebookPostText){
-    console.log(`highlighting ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
+    console.debug(`highlighting ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
 
     var container = document.getElementById(facebookId);
 
-    // TODO: Find a way to determine if the text contains a link
+    // Need to highlight line by line so that the text can be found within the HTML
     textLines = facebookPostText.split('\n');
     for(var i = 0; i<textLines.length; i++){
         var currentText = textLines[i].trim();
@@ -98,7 +101,6 @@ function markMisinformation(facebookPostText){
         previouslyFoundText.add(currentText);
 
         if (currentText.length > 0) {
-            // console.log(`Highlighting "${currentText}"`);
             InstantSearch.highlight(container, currentText);
         }
     }
