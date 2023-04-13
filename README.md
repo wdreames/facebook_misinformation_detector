@@ -41,11 +41,13 @@ The machine learning algorithm used by this extension was created by [Nishit Pat
 
 If you were successfully able to install the extension, it should begin working automatically. Start scrolling through your Facebook feed to test it out! :)
 
-## More Advanced Use
+## Advanced Use
 
-### Finding exact truth scores
+### Finding the exact truth scores
 
-When the extension checks a post for misinformation, it feeds it into a machine learning algorithm that outputs a number from a range of 0 to 1. This value indicates how likely the text is to be true. If the value is ever below 0.5, the text of that post will be highlighted. If you are interested in learning the exact values that are determined for each post, you can open the Chrome developer console. The values will be displayed there under the "info" section.
+When the extension checks a post for misinformation, it feeds the post's text into a machine learning algorithm that outputs a number from a range of 0 to 1. This value indicates how likely the text is to be true. If the value is ever below 0.5, the text of that post will be highlighted. 
+
+If you are interested in learning the exact values that are determined for each post, you can open the Chrome developer console. The values will be displayed there under the "info" section.
 
 ### Changing the truth score threshold
 
@@ -59,8 +61,4 @@ The machine learning algorithm is currently being called through the use of a GE
 2. Change the `misinfoProcessorParameterKey` constant in [src/content.js](src/content.js).
 3. Add the new server URL to the [manifest.json](manifest.json) file under `"host_permissions"`.
 
-This would still require that the algorithm can be called through a GET request and output a probability representing the likelihood that the inputted text is true. If further changes are required, the [documentation] for this extension may be useful.
-
-### Documentation
-
-The documentation describing how this exenstion was implemented can be found [here].
+This would still require that the algorithm can be called through a GET request and output a probability representing the likelihood that the inputted text is true.
