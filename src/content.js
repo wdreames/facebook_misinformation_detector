@@ -63,11 +63,10 @@ function checkForMisinformation(facebookPostText){
     xmlHttp.open("GET", requestURL, async=true);
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-            // console.log(`${xmlHttp.responseText}: ${cleanedText}`);
             processMisinformationRequest(facebookPostText, xmlHttp.responseText);
         }
     }
-    console.log(`sending request for "${requestURL}"`)
+    console.debug(`sending request for "${requestURL}"`)
     xmlHttp.send();
 }
 
@@ -88,7 +87,7 @@ function processMisinformationRequest(facebookPostText, responseText) {
 }
 
 function markMisinformation(facebookPostText){
-    console.log(`highlighting ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
+    console.debug(`highlighting ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
 
     var container = document.getElementById(facebookId);
 
@@ -103,7 +102,6 @@ function markMisinformation(facebookPostText){
         previouslyFoundText.add(currentText);
 
         if (currentText.length > 0) {
-            // console.log(`Highlighting "${currentText}"`);
             InstantSearch.highlight(container, currentText);
         }
     }
