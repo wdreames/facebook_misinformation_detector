@@ -6,8 +6,8 @@
 
     "content_scripts": [
         {
-            "js": ["facebook-misinformation-detector/content.js"],
-            "css": ["facebook-misinformation-detector/highlight.css"],
+            "js": ["src/content.js"],
+            "css": ["src/highlight.css"],
             "matches": [
                 "https://www.facebook.com/*"
             ]
