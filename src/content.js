@@ -7,11 +7,12 @@
 const misinfoProcessorSeverURL = 'https://william-reames.com/facebook-misinformation-detector/check-for-misinfo.php';
 const misinfoProcessorParameterKey = 'text';
 
+const misinformationThreshold = 0.5;
+const defaultMisinformationValue = 1.0;
+
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
-const defaultMisinformationValue = 1.0;
-const misinformationThreshold = 0.5;
 
 var lastLog = "";
 var previouslyFoundText = new Set();
