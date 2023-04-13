@@ -9,7 +9,7 @@ This repository contains the source code for a Chrome Extension that can detect 
 
 However, it should be noted that the extension is only making its ***best approximations*** for what could potentially be misinformation, and it ***may not be entirely accurate.***
 
-The machine learning algorithm used by this extension was created by [Nishit Patel](https://www.linkedin.com/in/nishitp/), a Data Scientist and Machine Learning professional at Google. The source code for the algorithm can be found here: https://github.com/nishitpatel01/Fake_News_Detection. 
+The machine learning algorithm used by this extension was created by [Nishit Patel](https://github.com/nishitpatel01), a Data Scientist and Machine Learning professional at Google. The source code for the algorithm can be found here: https://github.com/nishitpatel01/Fake_News_Detection. 
 
 ## Installing the Extension
 
