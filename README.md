@@ -15,7 +15,7 @@ The machine learning algorithm used by this extension was created by [Nishit Pat
 
 1. Download this repository
 
-    `git clone https://github.com/wdreames/facebook_misinformation_detector.git`
+    `# git clone https://github.com/wdreames/facebook_misinformation_detector.git`
 
 2. Open the Chrome Extensions developer console. Enter `chrome://extensions/` into a Chrome window. You should be able to see a page similar to this:
 
