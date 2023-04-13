@@ -4,16 +4,21 @@
  * Facebook Misinformation Detector
  */
 
-var lastLog = "";
-var previouslyFoundText = new Set();
+const misinfoProcessorSeverURL = 'https://william-reames.com/facebook-misinformation-detector/check-for-misinfo.php';
+const misinfoProcessorParameterKey = 'text';
+
 const startOfPostMarker = " · ";
 const endOfPostMarker = "All reactions:";
 const facebookId = "facebook"
-const misinfoProcessorSeverURL = 'https://william-reames.com/facebook-misinformation-detector/check-for-misinfo.php';
 const defaultMisinformationValue = 1.0;
 const misinformationThreshold = 0.5;
 
-window.addEventListener("scroll", () => {
+var lastLog = "";
+var previouslyFoundText = new Set();
+
+window.addEventListener("scroll", gatherFacebookText);
+
+function gatherFacebookText(){
     // Gather the text on the page
     var container = document.getElementById(facebookId);
     var newLog = container.innerText;
@@ -48,12 +53,12 @@ window.addEventListener("scroll", () => {
         var lastEndOfPost = newLog.lastIndexOf(endOfPostMarker);
         lastLog = newLog.substring(0, lastEndOfPost + endOfPostMarker.length);
     }
-});
+};
 
 function checkForMisinformation(facebookPostText){
     var xmlHttp = new XMLHttpRequest();
     var cleanedText = facebookPostText.replace('\n', ' ').trim();
-    var requestURL = misinfoProcessorSeverURL + "?text=" + cleanedText;
+    var requestURL = misinfoProcessorSeverURL + "?" + misinfoProcessorParameterKey + "=" + cleanedText;
 
     xmlHttp.open("GET", requestURL, async=true);
     xmlHttp.onreadystatechange = function() {

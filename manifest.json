@@ -1,13 +1,13 @@
 {
     "manifest_version": 3,
-    "name": "Facebook Logger",
+    "name": "Facebook Misinformation Detector",
     "version": "1.0",
-    "description": "Logs text from Facebook Posts into the Chrome console log.",
+    "description": "Highlights the text of Facebook posts in red if it is likely to contain misinformation.",
 
     "content_scripts": [
         {
-            "js": ["facebook-logger/content.js"],
-            "css": ["facebook-logger/highlight.css"],
+            "js": ["facebook-misinformation-detector/content.js"],
+            "css": ["facebook-misinformation-detector/highlight.css"],
             "matches": [
                 "https://www.facebook.com/*"
             ]
