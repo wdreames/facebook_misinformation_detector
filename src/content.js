@@ -29,7 +29,7 @@ function gatherFacebookText(){
     var end = start + lastLog.length;
     var currentLog = newLog.substring(0, start - 1) + newLog.substring(end);
 
-    // Limit to only text from posts
+    // Gather text from all new posts
     var numLoops = 0;
     while(currentLog.indexOf(endOfPostMarker) !== -1){
 
@@ -42,11 +42,12 @@ function gatherFacebookText(){
         }
         var facebookPostText = textUpToEndOfPost.substring(startOfPost + startOfPostMarker.length);
 
+        // Check the text for misinformation
         if(facebookPostText.length !== 0 && facebookPostText !== '\n'){
             checkForMisinformation(facebookPostText);
         }
 
-        // Remove the post text from the current log
+        // Remove the text from the current log
         currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");
     }
 
