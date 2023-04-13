@@ -7,9 +7,9 @@ William Reames\
 
 This repository contains the source code for a Chrome Extension that can detect misinformation within Facebook posts. If the extension detects any potential misinformation, the text will be highlighted in red. This can allow a user to be more aware of potential misinformation.
 
-However, it should be noted that the extension is only making its **best approximations** for what could potentially be misinformation, and it **may not be entirely accurate.**
+However, it should be noted that the extension is only making its ***best approximations*** for what could potentially be misinformation, and it ***may not be entirely accurate.***
 
-The machine learning algorithm used by this extension was created by [Nishit Patel](https://www.linkedin.com/in/nishitp/), a Data Scientist and Machine Learning professional at Google. The source code for this algorithm can be found here: https://github.com/nishitpatel01/Fake_News_Detection. 
+The machine learning algorithm used by this extension was created by [Nishit Patel](https://www.linkedin.com/in/nishitp/), a Data Scientist and Machine Learning professional at Google. The source code for the algorithm can be found here: https://github.com/nishitpatel01/Fake_News_Detection. 
 
 ## Installing the Extension
 
