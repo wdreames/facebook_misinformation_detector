@@ -6,7 +6,6 @@
 
 const misinfoProcessorSeverURL = 'https://william-reames.com/facebook-misinformation-detector/check-for-misinfo.php';
 const misinfoProcessorParameterKey = 'text';
-
 const misinformationThreshold = 0.5;
 const defaultMisinformationValue = 1.0;
 
@@ -30,7 +29,6 @@ function gatherFacebookText(){
     var currentLog = newLog.substring(0, start - 1) + newLog.substring(end);
 
     // Gather text from all new posts
-    var numLoops = 0;
     while(currentLog.indexOf(endOfPostMarker) !== -1){
 
         // Get the text from a post
@@ -47,7 +45,7 @@ function gatherFacebookText(){
             checkForMisinformation(facebookPostText);
         }
 
-        // Remove the text from the current log
+        // Remove the text from the current log of text
         currentLog = currentLog.replace(facebookPostText + endOfPostMarker, "");
     }
 
@@ -73,13 +71,12 @@ function checkForMisinformation(facebookPostText){
 }
 
 function processMisinformationRequest(facebookPostText, responseText) {
-
     // Removes HTML tags from the response
     var responsePlainText = responseText.replace(/(<([^>]+)>)/ig,"");
 
     var misinformationScore = Number(responsePlainText);
     if (isNaN(misinformationScore)) {
-        return defaultMisinformationValue;
+        misinformationScore = defaultMisinformationValue;
     }
 
     console.log(`${misinformationScore}: ${facebookPostText.substring(0, 35).replace('\n', '')}...`)
@@ -93,7 +90,7 @@ function markMisinformation(facebookPostText){
 
     var container = document.getElementById(facebookId);
 
-    // TODO: Find a way to determine if the text contains a link
+    // Need to highlight line by line so that the text can be found within the HTML
     textLines = facebookPostText.split('\n');
     for(var i = 0; i<textLines.length; i++){
         var currentText = textLines[i].trim();
