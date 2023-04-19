@@ -51,14 +51,14 @@ If you are interested in learning the exact values that are determined for each 
 
 ### Changing the truth score threshold
 
-The machine learning algorithm was configured to work based on a threshold of 0.5. However, if you would like to use a different value, you can change the `misinformationThreshold` constant in [src/content.js](src/content.js#9).
+The machine learning algorithm was configured to work based on a threshold of 0.5. However, if you would like to use a different value, you can change the `misinformationThreshold` constant in [src/content.js](src/content.js#L9).
 
 ### Changing the machine learning algorithm
 
 The machine learning algorithm is currently being called through the use of a GET request. If you are able to find or set up a different algorithm that you believe would work better than the current implementation, you can alter how this request is called by completing the following steps:
 
-1. Change the `misinfoProcessorSeverURL` constant in [src/content.js](src/content.js#7).
-2. Change the `misinfoProcessorParameterKey` constant in [src/content.js](src/content.js#8).
-3. Add the new server URL to the [manifest.json](manifest.json#17-20) file under `"host_permissions"`.
+1. Change the `misinfoProcessorSeverURL` constant in [src/content.js](src/content.js#L7).
+2. Change the `misinfoProcessorParameterKey` constant in [src/content.js](src/content.js#L8).
+3. Add the new server URL to the [manifest.json](manifest.json#L17-L20) file under `"host_permissions"`.
 
 This would still require that the algorithm can be called through a GET request and output a probability representing the likelihood that the inputted text is true.
