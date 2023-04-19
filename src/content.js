@@ -93,16 +93,20 @@ function markMisinformation(facebookPostText){
     // Need to highlight line by line so that the text can be found within the HTML
     textLines = facebookPostText.split('\n');
     for(var i = 0; i<textLines.length; i++){
-        var currentText = textLines[i].trim();
-        currentText = currentText.replace('… See more', '');
-        if (previouslyFoundText.has(currentText) ){
-            continue;
-        }
-        previouslyFoundText.add(currentText);
+        highlightLineOfText(textLines[i], container);
+    }
+}
 
-        if (currentText.length > 0) {
-            InstantSearch.highlight(container, currentText);
-        }
+function highlightLineOfText(textLine, container) {
+    textLine = textLine.trim();
+    textLine = textLine.replace('… See more', '');
+    if (previouslyFoundText.has(textLine) ){
+        return;
+    }
+    previouslyFoundText.add(textLine);
+
+    if (textLine.length > 0) {
+        InstantSearch.highlight(textLine, container);
     }
 }
 
@@ -111,7 +115,7 @@ function markMisinformation(facebookPostText){
  */
 var InstantSearch = {
 
-    "highlight": function (container, highlightText)
+    "highlight": function (highlightText, container)
     {
         var internalHighlighter = function (options)
         {
